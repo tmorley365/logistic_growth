@@ -1,19 +1,35 @@
-#Script to estimate the model parameters using a linear approximation
+# Load necessary library
+install.packages("dplyr") 
+library(dplyr)
 
-#library(dplyr)
+# Load the data
+# Replace 'your_file_path.csv' with the actual path to your CSV file
+growth_data <- read.csv("experiment.csv.csv")
 
-growth_data <- read.csv("???")
+# Case 1: Early phase where K >> N0 and t is small
+# Here, you need to define a threshold for `t` where the initial growth is approximately exponential.
+# Replace `threshold_t1` with an appropriate value (e.g., `t < 10`).
 
-#Case 1. K >> N0, t is small
+threshold_t1 <- 1000  # Example threshold; adjust based on your data
 
-data_subset1 <- growth_data %>% filter(t<???) %>% mutate(N_log = log(N))
+data_subset1 <- growth_data %>%
+  filter(t < threshold_t1) %>%
+  mutate(N_log = log(N))
 
-model1 <- lm(N_log ~ t, data_subset1)
+# Fit a linear model to log-transformed N to approximate early growth rate
+model1 <- lm(N_log ~ t, data = data_subset1)
 summary(model1)
 
-#Case 2. N(t) = K
+# Case 2: Late phase where N(t) approaches the carrying capacity K
+# Choose a threshold where `t` is large enough that N(t) ≈ K.
+# Replace `threshold_t2` with an appropriate value (e.g., `t > 50`).
 
-data_subset2 <- growth_data %>% filter(t>???)
+threshold_t2 <- 2000  # Example threshold; adjust based on your data
 
-model2 <- lm(N ~ 1, data_subset2)
+data_subset2 <- growth_data %>%
+  filter(t > threshold_t2)
+
+# Fit a linear model to estimate the carrying capacity, assuming N is constant at this phase
+model2 <- lm(N ~ 1, data = data_subset2)
 summary(model2)
+
